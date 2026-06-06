@@ -49,4 +49,11 @@ app.use("/", commentRoutes);
 // base routes and other routes for the app
 app.get("/", getHomePage);
 
+// error handling - render 404
+app.use((req, res) => {
+    res.status(404).render("errors/404", {
+        title: "Page Not Found"
+    });
+});
+
 export default app;

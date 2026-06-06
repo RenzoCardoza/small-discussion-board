@@ -253,7 +253,16 @@ textarea:focus,
     gap: 1rem;
     margin-bottom: 1rem;
 }
-
+/* error handling  */
+.error-page {
+    max-width: 720px;
+    margin: 4rem auto;
+    text-align: center;
+}
+.error-page p {
+    margin-bottom: 1.5rem;
+    color: var(--muted);
+}
 /* Responsive media query */
 @media (max-width: 768px) {
     .site-header {
