@@ -1,7 +1,7 @@
 // import the router for routes, auth verification function and the create topic function from controller
 import { Router } from "express";
 import { authCheck } from "../middleware/authMiddleware";
-import { createNewTopic, deleteTopicById, getTopic, getTopics, renderNewTopicPage, updateTopicById } from "../controllers/topicController";
+import { createNewTopic, deleteTopicById, getTopic, getTopics, renderNewTopicPage, updateTopicById, renderEditTopicPage } from "../controllers/topicController";
 
 // create a new instance of router
 const router = Router();
@@ -12,6 +12,8 @@ router.get("/", getTopics);
 router.get("/new", authCheck, renderNewTopicPage);
 // create a new topic route
 router.post("/", authCheck, createNewTopic);
+// route that handles the rendering edit topic
+router.get("/:id/edit", authCheck, renderEditTopicPage);
 // get a topic by its id
 router.get("/:id", getTopic);
 // update a topic

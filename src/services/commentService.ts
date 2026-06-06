@@ -90,3 +90,14 @@ export async function updateComment(commentId: string, userId:string, input: Upd
     // return the updated comment
     return comment;
 }
+// service that get comment by its id 
+export async function getCommentById(commentId: string) {
+    // get the comment
+    const comment = await Comment.findById(commentId).populate("author", "username email");
+    // if not, throw error
+    if (!comment) {
+        throw new Error("Comment not found");
+    }
+    // return it
+    return comment;
+}

@@ -1,6 +1,6 @@
 // dependencies
 import { Request, Response } from "express";
-import { createComment, getCommentsByTopic, deleteComment, updateComment } from "../services/commentService";
+import { createComment, getCommentsByTopic, deleteComment, updateComment, getCommentById } from "../services/commentService";
 
 // function that handles creating a new comment
 export async function createNewComment(req: Request<{ topicId: string }>, res: Response) {
@@ -68,11 +68,8 @@ export async function deleteCommentById(req: Request<{ commentId: string }>, res
 
         // delete the comment
         const deletedComment = await deleteComment(req.params.commentId, userId);
-        // send success msg
-        res.status(200).json({
-            "message": "comment was deleted",
-            "comment": deletedComment
-        });
+        // redirect if successful
+        res.redirect(`/topics/${deletedComment.topic}`);
 
     } catch (error) {
         // same error msg for now
@@ -104,11 +101,8 @@ export async function updateCommentById(req: Request<{ commentId: string }>, res
 
         // update the comment
         const updatedComment = await updateComment(req.params.commentId, userId, req.body);
-        // send success msg
-        res.status(200).json({
-            "message": "comment was updated",
-            "comment": updatedComment
-        });
+        // redirect if success
+        res.redirect(`/topics/${updatedComment.topic}`);
     
     } catch (error) {
         // same error msg for now
@@ -123,5 +117,31 @@ export async function updateCommentById(req: Request<{ commentId: string }>, res
                 "message": "Failed to update comment"
             });
         }
+    }
+}
+// function that renders the edit comment page
+export async function renderEditCommentPage(req: Request<{ commentId: string }>, res: Response) {
+    try {
+        // get id from session
+        const userId = req.session.user?.id;
+        // redirect if not authorized
+        if (!userId) {
+            return res.redirect("/auth/login");
+        }
+        // get the comment
+        const comment = await getCommentById(req.params.commentId);
+        // if the owner does this, proceed, otherwise shut it down
+        if (comment.author._id.toString() !== userId) {
+            return res.status(403).send("Forbidden");
+        }
+        // render the page
+        res.render("comments/edit", {
+            title: "Edit Comment",
+            comment
+        });
+    } catch (error) {
+        res.status(400).json({
+            message: error instanceof Error ? error.message : "Failed to load edit comment page"
+        });
     }
 }

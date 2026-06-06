@@ -139,11 +139,8 @@ export async function updateTopicById(req: Request<{ id: string }>, res: Respons
         }
         // use model function 
         const updatedTopic = await updateTopic(req.params.id, userId, req.body);
-        // send success msg
-        res.status(200).json({
-            "message": "Topic updated successfully",
-            "topic": updatedTopic
-        });
+        // redirect after success
+        res.redirect(`/topics/${updatedTopic._id}`);
 
     } catch (error) {
         if (error instanceof Error) {
@@ -165,4 +162,30 @@ export function renderNewTopicPage(req: Request, res: Response){
     res.render("topics/new", {
         title: "Create Topic"
     });
+}
+// function to render edit topic page
+export async function renderEditTopicPage(req: Request<{ id: string }>, res: Response) {
+    try {
+        // get the user if from session
+        const userId = req.session.user?.id;
+        // redirect if not logged in
+        if (!userId) {
+            return res.redirect("/auth/login");
+        }
+        // get the topic
+        const topic = await getTopicById(req.params.id);
+        // if not matched -- unauthorized
+        if (topic.author._id.toString() !== userId) {
+            return res.status(403).send("Forbidden");
+        }
+        // render the page
+        res.render("topics/edit", {
+            title: "Edit Topic",
+            topic
+        });
+    } catch (error) {
+        res.status(400).json({
+            message: error instanceof Error ? error.message : "Failed to load edit topic page"
+        });
+    }
 }
