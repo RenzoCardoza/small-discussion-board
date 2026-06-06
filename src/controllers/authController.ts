@@ -56,3 +56,18 @@ export async function login(req: Request, res: Response){
         }
     }
 }
+// controller to handle logout
+export async function logout(req: Request, res: Response){
+    // destroy the session = log out the user
+    req.session.destroy((error) => {
+        if (error) {
+            return res.status(500).json({
+                "message": "logout failed"
+            });
+        }
+
+        // redirect the user to the main page
+        res.clearCookie("connect.sid");
+        res.redirect("/");
+    });
+}
