@@ -2,6 +2,7 @@
 import express from "express";
 import session from "express-session";
 import authRoutes from "./routes/authRoutes";
+import topicRoutes from "./routes/topicRoutes";
 
 // declare app to use express
 const app = express();
@@ -19,6 +20,7 @@ app.use(session({
     
 // router for the authentication routes
 app.use("/auth", authRoutes);
+app.use("/topics", topicRoutes);
 
 // base routes and other routes for the app
 app.get("/", (req, res) =>{
