@@ -10,6 +10,7 @@ export async function getHomePage(req: Request, res: Response) {
 
         // render to user content for home page
         res.render("index", {
+            title: "Home",
             topics,
             user: req.session.user
         });

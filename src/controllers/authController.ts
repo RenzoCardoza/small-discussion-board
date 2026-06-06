@@ -71,3 +71,16 @@ export async function logout(req: Request, res: Response){
         res.redirect("/");
     });
 }
+// render login page
+export function renderLoginPage(req: Request, res: Response) {
+    res.render("auth/login", {
+        title: "Login"
+    });
+}
+
+// render register page
+export function renderRegisterPage(req: Request, res: Response) {
+    res.render("auth/register", {
+        title: "Register"
+    });
+}

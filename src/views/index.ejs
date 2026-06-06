@@ -1,0 +1,21 @@
+<section class="page-section">
+    <h2>Recent Topics</h2>
+
+    <% if (!topics || topics.length === 0) { %>
+        <p>No topics yet.</p>
+    <% } else { %>
+        <% topics.forEach((topic) => { %>
+            <article class="topic-card">
+                <h3>
+                    <a href="/topics/<%= topic._id %>">
+                        <%= topic.title %>
+                    </a>
+                </h3>
+
+                <p class="meta">
+                    Posted by <%= topic.author?.username || "Unknown user" %>
+                </p>
+            </article>
+        <% }) %>
+    <% } %>
+</section>

@@ -7,22 +7,18 @@ export async function createNewComment(req: Request<{ topicId: string }>, res: R
     try{
         // get the user id
         const userId = req.session.user?.id;
+        const topicId = req.params.topicId;
 
-        // if not logged in send unauthorized
+        // if not logged redirect
         if (!userId) {
-            return res.status(401).json({
-                "message": "Unauthorized"
-            });
+            return res.redirect("/auth/login");
         }
 
         // create the comment
         const comment = await createComment(req.params.topicId, userId, req.body);
 
-        // send success msg
-        res.status(201).json({
-            "message" : "New comment was created",
-            "comment" : comment
-        });
+        // redirect after success
+        res.redirect(`/topics/${topicId}`);
 
     } catch (error) {
         // same error msg for now

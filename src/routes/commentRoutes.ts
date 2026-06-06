@@ -7,12 +7,12 @@ import { createNewComment, getTopicComments, deleteCommentById, updateCommentByI
 const router = Router();
 
 // get comments by topic
-router.get("/:topicId", getTopicComments)
+router.get("/topics/:topicId/comments", getTopicComments)
 // create a new comment
-router.post("/:topicId", authCheck, createNewComment);
+router.post("/topics/:topicId/comments", authCheck, createNewComment);
 // update a comment
-router.put("/:commentId", authCheck, updateCommentById)
+router.put("/comments/:commentId", authCheck, updateCommentById)
 // delete a comment
-router.delete("/:commentId", authCheck, deleteCommentById);
+router.delete("/comments/:commentId", authCheck, deleteCommentById);
 
 export default router;

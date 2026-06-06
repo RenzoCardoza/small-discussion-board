@@ -1,6 +1,7 @@
 // import dependecies as well as types from express
 import { Request, Response } from "express";
 import { createTopic, deleteTopic, getAllTopics, getTopicById, updateTopic } from "../services/topicService";
+import { getCommentsByTopic } from "../services/commentService";
 
 // create controller function - topic
 export async function createNewTopic(req: Request, res: Response) {
@@ -8,21 +9,17 @@ export async function createNewTopic(req: Request, res: Response) {
         // get the user id from the session
         const userId = req.session.user?.id;
 
-        // if the id is missing - handle error with unauthorized
+        // if the id is missing - redirect to login
         if (!userId) {
-            return res.status(401).json({
-                "message": "Unauthorized"
-            });
+            return res.redirect("auth/login");
         }
 
         // create the topic using the service function
         const topic = await createTopic(req.body, userId);
 
-        // send response (for now) - json
-        res.status(201).json({
-            "message": "Topic was created sucessfully",
-            "topic": topic
-        });
+        // redirect to page
+        res.redirect(`/topics/${topic._id}`);
+
     } catch (error) {
         // same error distinguish to send different status codes
         // according to the type of error send a json msg
@@ -45,10 +42,12 @@ export async function getTopics(req: Request, res: Response) {
         // wait to get all topics
         const topics = await getAllTopics();
 
-        // send sucess status and msg
-        res.status(200).json({
-            "topics": topics
+        // render results
+        res.render("index", {
+            title: "Topics",
+            topics
         });
+
     } catch (error) {
         // send internal error msg
         res.status(500).json({
@@ -70,10 +69,13 @@ export async function getTopic(req: Request, res: Response) {
 
         // get the topic by its id
         const topic = await getTopicById(topicId);
+        // get also the comments
+        const comments = await getCommentsByTopic(topicId);
 
-        // res with topic
-        res.status(200).json({
-            "topic" : topic
+        res.render("topics/show", {
+            title: topic.title,
+            topic,
+            comments
         });
         
     } catch (error) {
@@ -156,4 +158,11 @@ export async function updateTopicById(req: Request<{ id: string }>, res: Respons
             });
         }
     }
+}
+// fuction that handles the rendering for new topic to create
+export function renderNewTopicPage(req: Request, res: Response){
+    // render the new page with view
+    res.render("topics/new", {
+        title: "Create Topic"
+    });
 }

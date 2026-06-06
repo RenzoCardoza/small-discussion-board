@@ -1,0 +1,68 @@
+<section class="page-section">
+    <article class="topic-detail">
+        <h2><%= topic.title %></h2>
+
+        <p class="meta">
+            Posted by <%= topic.author?.username || "Unknown user" %>
+        </p>
+
+        <p><%= topic.content %></p>
+
+        <% if (user && topic.author && topic.author._id.toString() === user.id) { %>
+            <div class="actions">
+                <a href="/topics/<%= topic._id %>/edit" class="button-link">
+                    Edit Topic
+                </a>
+
+                <form action="/topics/<%= topic._id %>?_method=DELETE" method="POST">
+                    <button type="submit" class="danger-button">
+                        Delete Topic
+                    </button>
+                </form>
+            </div>
+        <% } %>
+    </article>
+
+    <section class="comments-section">
+        <h3>Comments</h3>
+
+        <% if (!comments || comments.length === 0) { %>
+            <p>No comments yet.</p>
+        <% } else { %>
+            <% comments.forEach((comment) => { %>
+                <article class="comment-card">
+                    <p><%= comment.content %></p>
+
+                    <p class="meta">
+                        By <%= comment.author?.username || "Unknown user" %>
+                    </p>
+
+                    <% if (user && comment.author && comment.author._id.toString() === user.id) { %>
+                        <div class="actions">
+                            <a href="/comments/<%= comment._id %>/edit" class="button-link">
+                                Edit
+                            </a>
+
+                            <form action="/comments/<%= comment._id %>?_method=DELETE" method="POST">
+                                <button type="submit" class="danger-button">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    <% } %>
+                </article>
+            <% }) %>
+        <% } %>
+
+        <% if (user) { %>
+            <form action="/topics/<%= topic._id %>/comments" method="POST" class="form-card">
+                <label for="content">Add a comment</label>
+                <textarea id="content" name="content" rows="4" required></textarea>
+
+                <button type="submit">Post Comment</button>
+            </form>
+        <% } else { %>
+            <p><a href="/auth/login">Login</a> to comment.</p>
+        <% } %>
+    </section>
+</section>
