@@ -1,7 +1,7 @@
 // import the router for routes, auth verification function and the create topic function from controller
 import { Router } from "express";
 import { authCheck } from "../middleware/authMiddleware";
-import { createNewTopic, getTopic, getTopics } from "../controllers/topicController";
+import { createNewTopic, deleteTopicById, getTopic, getTopics } from "../controllers/topicController";
 
 // create a new instance of router
 const router = Router();
@@ -12,6 +12,8 @@ router.get("/", getTopics);
 router.get("/:id", getTopic);
 // create a new topic route
 router.post("/", authCheck, createNewTopic);
+//delete a topic
+router.delete("/:id", authCheck, deleteTopicById);
 
 
 //export the router to mount it on the app

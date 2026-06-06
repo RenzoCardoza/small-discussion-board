@@ -48,3 +48,24 @@ export async function getTopicById(id: string) {
 
     return topic;
 }
+// function to delete topic -- only author can delete the topic
+export async function deleteTopic(topicId: string, userId: string) {
+    // find the topic by its id first
+    const topic = await Topic.findById(topicId);
+
+    // if there is no topic, throw error
+    if (!topic) {
+        throw new Error("Topic not found");
+    }
+
+    // if the the user id and author id do not match then cancel operation
+    if (topic.author.toString() !== userId){
+        throw new Error("Only the author can delete this topic");
+    }
+
+    // use model function to delete by the id
+    await Topic.findByIdAndDelete(topicId);
+
+    // return what was deleted
+    return topic;
+}

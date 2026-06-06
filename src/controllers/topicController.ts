@@ -1,6 +1,6 @@
 // import dependecies as well as types from express
 import { Request, Response } from "express";
-import { createTopic, getAllTopics, getTopicById } from "../services/topicService";
+import { createTopic, deleteTopic, getAllTopics, getTopicById } from "../services/topicService";
 
 // create controller function - topic
 export async function createNewTopic(req: Request, res: Response) {
@@ -86,6 +86,40 @@ export async function getTopic(req: Request, res: Response) {
             // internal error msg
             res.status(500).json({
                 "message": "Failed to retrieve that topic"
+            });
+        }
+    }
+}
+// delete the topic by the id
+export async function deleteTopicById(req: Request<{ id: string }>, res: Response) {
+    try {
+        // get the user id from session
+        const userId = req.session.user?.id;
+
+        // send error status and msg if there is no session
+        if (!userId) {
+            return res.status(401).json({
+                "message" : "Unauthorized"
+            });
+        }
+
+        // delete the topic using the service function
+        const deletedTopic = await deleteTopic(req.params.id, userId);
+        // send the success msg 
+        res.status(200).json({
+            "message" : "Topic deleted successfully",
+            "topic": deletedTopic
+        });
+    } catch (error) {
+        if (error instanceof Error) {
+            res.status(400).json({
+                "message": error.message
+            });
+
+        } else {
+            // internal error msg
+            res.status(500).json({
+                "message": "Failed to delete that topic"
             });
         }
     }
