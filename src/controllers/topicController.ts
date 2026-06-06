@@ -1,6 +1,6 @@
 // import dependecies as well as types from express
 import { Request, Response } from "express";
-import { createTopic, deleteTopic, getAllTopics, getTopicById } from "../services/topicService";
+import { createTopic, deleteTopic, getAllTopics, getTopicById, updateTopic } from "../services/topicService";
 
 // create controller function - topic
 export async function createNewTopic(req: Request, res: Response) {
@@ -120,6 +120,39 @@ export async function deleteTopicById(req: Request<{ id: string }>, res: Respons
             // internal error msg
             res.status(500).json({
                 "message": "Failed to delete that topic"
+            });
+        }
+    }
+}
+// update the topic
+export async function updateTopicById(req: Request<{ id: string }>, res: Response) {
+    try {
+        // get the user id
+        const userId = req.session.user?.id;
+        // if userid is missing -- throw new error
+        if (!userId) {
+            return res.status(401).json({
+                "message": "Unauthorized"
+            });
+        }
+        // use model function 
+        const updatedTopic = await updateTopic(req.params.id, userId, req.body);
+        // send success msg
+        res.status(200).json({
+            "message": "Topic updated successfully",
+            "topic": updatedTopic
+        });
+
+    } catch (error) {
+        if (error instanceof Error) {
+            res.status(400).json({
+                "message": error.message
+            });
+
+        } else {
+            // internal error msg
+            res.status(500).json({
+                "message": "Failed to update that topic"
             });
         }
     }
