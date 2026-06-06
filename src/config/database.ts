@@ -12,7 +12,9 @@ export async function connectDb() {
             throw new Error("Database URI is missing");
         }
         // connect to the database with the connection string
-        await mongoose.connect(process.env.MONGO_URI);
+        await mongoose.connect(process.env.MONGO_URI, {
+            dbName: "discussion-board"
+        });
 
         // success message
         console.log("Database connected sucessfully!");

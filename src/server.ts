@@ -1,10 +1,10 @@
 // import dependencies
 import dotenv from "dotenv";
+// load env variables
+dotenv.config();
 import { connectDb } from "./config/database";
 import app from "./app";
 
-// load env variables
-dotenv.config();
 // I am getting the port value from the env file and then make it so it is type number or fallback into the value 3000
 const PORT = Number(process.env.PORT) || 3000;
 
