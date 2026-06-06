@@ -1,6 +1,6 @@
 // import dependencies
 import { Request, Response } from 'express';
-import { registerUser } from '../services/authService';
+import { loginUser, registerUser } from '../services/authService';
 
 // controller that handles the user registration
 export async function register(req: Request, res: Response){
@@ -26,6 +26,32 @@ export async function register(req: Request, res: Response){
             // same as above but for internal server error
             res.status(500).json({
                 message: "Registration Failed"
+            });
+        }
+    }
+}
+// controller that handles login
+export async function login(req: Request, res: Response){
+    try {
+        // use auth service method to log the user with the data from the body
+        const user = await loginUser(req.body);
+
+        // log the user
+        req.session.user = user;
+
+        // redirect
+        res.redirect("/topics");
+    } catch (error) {
+        // according to the type of error send a json msg
+        if (error instanceof Error) {
+            res.status(400).json({
+                "message": error.message
+            });
+
+        } else {
+            // internal error msg
+            res.status(500).json({
+                "message": "Login Failed"
             });
         }
     }

@@ -14,6 +14,11 @@ export type SafeUser = {
     username: string;
     email: string;
 }
+// type for the input in login
+export type LoginUserInput = {
+    email: string;
+    password: string;
+}
 
 //function that handles the register for users
 export async function registerUser(input: RegisterUserInput): Promise<SafeUser> {
@@ -56,4 +61,42 @@ export async function registerUser(input: RegisterUserInput): Promise<SafeUser> 
         username: user.username,
         email: user.email
     }
+}
+
+// function that handles the login
+export async function loginUser(input: LoginUserInput) : Promise<SafeUser> {
+    // separate values
+    const { email, password } = input;
+
+    // throw error when fields are missing
+    if (!email.trim() || !password.trim()) {
+        throw new Error("Email and password are required");
+    }
+
+    // normalize email for lookup
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // get the user with the explicit passwordhash since is hidden
+    const user = await User.findOne({
+        email: normalizedEmail
+    }).select("+passwordHash");
+
+    // throw error if user does not exists
+    if (!user) {
+        throw new Error("Invalid email or password");
+    }
+
+    // use bcrypt to compare and see if password is a match
+    const passwordMatches = await bcrypt.compare(password, user.passwordHash);
+
+    if (!passwordMatches) {
+        throw new Error("Invalid email or password");
+    }
+
+    // return the data once was successful
+    return {
+        id: user._id.toString(),
+        username: user.username,
+        email: user.email
+    };
 }
