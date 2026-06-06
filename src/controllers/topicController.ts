@@ -107,11 +107,8 @@ export async function deleteTopicById(req: Request<{ id: string }>, res: Respons
 
         // delete the topic using the service function
         const deletedTopic = await deleteTopic(req.params.id, userId);
-        // send the success msg 
-        res.status(200).json({
-            "message" : "Topic deleted successfully",
-            "topic": deletedTopic
-        });
+        // redirect
+        res.redirect("/")
     } catch (error) {
         if (error instanceof Error) {
             res.status(400).json({
