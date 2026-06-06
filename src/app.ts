@@ -4,9 +4,14 @@ import session from "express-session";
 import authRoutes from "./routes/authRoutes";
 import topicRoutes from "./routes/topicRoutes";
 import commentRoutes from "./routes/commentRoutes";
+import path from "path";
 
 // declare app to use express
 const app = express();
+
+// view engine setup for EJS
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
 // middleware to read JSON requests
 app.use(express.urlencoded({ extended: true }));
