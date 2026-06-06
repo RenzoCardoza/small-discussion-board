@@ -1,6 +1,6 @@
 // import dependecies as well as types from express
 import { Request, Response } from "express";
-import { createTopic } from "../services/topicService";
+import { createTopic, getAllTopics, getTopicById } from "../services/topicService";
 
 // create controller function - topic
 export async function createNewTopic(req: Request, res: Response) {
@@ -35,6 +35,57 @@ export async function createNewTopic(req: Request, res: Response) {
             // internal error msg
             res.status(500).json({
                 "message": "Failed to create Topic"
+            });
+        }
+    }
+}
+// get all topics controller function
+export async function getTopics(req: Request, res: Response) {
+    try {
+        // wait to get all topics
+        const topics = await getAllTopics();
+
+        // send sucess status and msg
+        res.status(200).json({
+            "topics": topics
+        });
+    } catch (error) {
+        // send internal error msg
+        res.status(500).json({
+            "message": "Failed to retrieve all topics"
+        });
+    }
+}
+// get topic by the id
+export async function getTopic(req: Request, res: Response) {
+    try {
+        // narrow the type of params.id 
+        const topicId = req.params.id;
+        // typescript was inferring that topic id was String[], this narrows to only string
+        if (!topicId || Array.isArray(topicId)) {
+            return res.status(400).json({
+                "message": "Topic id is required"
+            });
+        }
+
+        // get the topic by its id
+        const topic = await getTopicById(topicId);
+
+        // res with topic
+        res.status(200).json({
+            "topic" : topic
+        });
+        
+    } catch (error) {
+        if (error instanceof Error) {
+            res.status(400).json({
+                "message": error.message
+            });
+
+        } else {
+            // internal error msg
+            res.status(500).json({
+                "message": "Failed to retrieve that topic"
             });
         }
     }

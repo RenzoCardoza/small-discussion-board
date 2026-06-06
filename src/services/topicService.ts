@@ -26,3 +26,25 @@ export async function createTopic(input:CreateTopicInput, authorId:string){
 
     return topic;
 }
+// function to retreive all topics
+export async function getAllTopics(){
+    // use model function to get all in the collection
+    const topics = await Topic.find()
+        .populate("author", "username email")
+        .sort({ createdAt: -1 });
+
+    // return the list
+    return topics;
+}
+// function to get topic by its id
+export async function getTopicById(id: string) {
+    // use model function to find by the id - then populate the authorId with the actual data
+    const topic = await Topic.findById(id).populate("author", "username email");
+
+    // if cannot find it, throw new error
+    if (!topic) {
+        throw new Error("Cannot find that Topic");
+    }
+
+    return topic;
+}
